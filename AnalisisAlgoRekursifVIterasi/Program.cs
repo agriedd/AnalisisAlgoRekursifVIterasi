@@ -31,27 +31,99 @@ namespace AnalisisAlgoRekursifVIterasi
             /**
              * program dibawah
              * 
+             * urutkan data yang masih berantakan
+             * 
              */
-            //Console.WriteLine("{0}", data[138128]);
             orderData(data);
 
             //loader.loading = false;
             //loader = null;
+
             Console.Title = "Rekursif v Iterasi";
 
+            Console.WriteLine("Masukan kata dasar yang ingin dicari (Inggris):");
+            String cari = Console.ReadLine();
             var watch = new Stopwatch();
 
+            /**
+             * 
+             * 1. binary search rekursif
+             * 
+             */
+            Console.WriteLine("Binary Search (Rekursif)");
             watch.Start();
-            int result = binarySearchRekusif(data, "money", data.Length);
+            int result = binarySearchRekusif(data, cari, data.Length);
             watch.Stop();
 
             if (result == -1)
                 Console.WriteLine("Element not present");
             else
-                Console.WriteLine("Element found at "
+                Console.WriteLine("Ditemukan pada "
                                 + "index " + result + ": {0}", data[result]);
-            Console.WriteLine("Lama: "+watch.ElapsedMilliseconds + "." + watch.ElapsedTicks + "ms");
-            Console.Read();
+            Console.WriteLine("Waktu: "+watch.ElapsedMilliseconds + "." + watch.ElapsedTicks + "ms");
+            watch.Reset();
+            Console.WriteLine();
+            Console.ReadLine();
+
+            /**
+             * 
+             * 2. binary search iteratif
+             * 
+             */
+            Console.WriteLine("Binary Search (Iteratif)");
+            watch.Start();
+            result = binarySearch(data, cari);
+            watch.Stop();
+
+            if (result == -1)
+                Console.WriteLine("Element not present");
+            else
+                Console.WriteLine("Ditemukan pada "
+                                + "index " + result + ": {0}", data[result]);
+            Console.WriteLine("Waktu: " + watch.ElapsedMilliseconds + "." + watch.ElapsedTicks + "ms");
+            watch.Reset();
+            Console.WriteLine();
+            Console.ReadLine();
+            
+            /**
+             * 
+             * 3. linear search rekursif
+             * 
+             */
+            Console.WriteLine("Linear Search (Rekursif)");
+            watch.Start();
+            result = linearSearchRekursif(data, cari);
+            watch.Stop();
+
+            if (result == -1)
+                Console.WriteLine("Element not present");
+            else
+                Console.WriteLine("Ditemukan pada "
+                                + "index " + result + ": {0}", data[result]);
+            Console.WriteLine("Waktu: " + watch.ElapsedMilliseconds + "." + watch.ElapsedTicks + "ms");
+            watch.Reset();
+            Console.WriteLine();
+            Console.ReadLine();
+
+            /**
+             * 
+             * 4. linear search iteratif
+             * 
+             */
+            Console.WriteLine("Linear Search (Iteratif)");
+            watch.Start();
+            result = linearSearch(data, cari);
+            watch.Stop();
+
+            if (result == -1)
+                Console.WriteLine("Element not present");
+            else
+                Console.WriteLine("Ditemukan pada "
+                                + "index " + result + ": {0}", data[result]);
+            Console.WriteLine("Waktu: " + watch.ElapsedMilliseconds + "." + watch.ElapsedTicks + "ms");
+            watch.Reset();
+            Console.WriteLine();
+            Console.ReadLine();
 
         }
 
