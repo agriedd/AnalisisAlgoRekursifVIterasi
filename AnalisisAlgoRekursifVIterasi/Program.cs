@@ -17,10 +17,6 @@ namespace AnalisisAlgoRekursifVIterasi
         private static string[] BankKata;
 
         static void Main(string[] args){
-            /**
-             * memuat data sampel sebagai array string
-             * 
-             */
             Stopwatch stopwatch = Stopwatch.StartNew();
             stopwatch.Start();
             
@@ -34,24 +30,11 @@ namespace AnalisisAlgoRekursifVIterasi
             
             Task.WaitAll(new Task[] { loadTeks, loadStopword, loadBankKata });
 
-            /**
-             * print string hasil
-             * 
-             */
             Console.WriteLine("Cetak hasil sampel kalimat: ");
             foreach (String s in data)
                 Console.WriteLine(s);
             Console.WriteLine();
             Console.WriteLine();
-
-            /**
-            foreach (String s in data)
-            {
-                TextProcessing(s);
-            }
-            stopwatch.Stop();
-            Console.WriteLine("Waktu {0}ms", stopwatch.ElapsedMilliseconds);
-            */
 
             Parallel.For(0, data.Length, i =>
             {
@@ -68,14 +51,7 @@ namespace AnalisisAlgoRekursifVIterasi
 
         private static void TextProcessing(string v)
         {
-            /**
-             * case folding => mengubah semua karakter ke lowercase atau huruf kecil
-             * 
-             */
             v = CaseFolding(v);
-            /**
-             * tokenizing => 
-             */
             Console.WriteLine();
             Console.WriteLine(v);
             String[] V = Tokenizing(v);
@@ -89,51 +65,16 @@ namespace AnalisisAlgoRekursifVIterasi
 
         private static string[] Filtering(string[] v){
             List<String> list = new List<String>();
-            /**
-             * perulangan kata pada kalimat
-             * 
-             */
             foreach (String s in v)
             {
-                /**
-                 * nilai ketemu awalnya bernilai false untuk setiap
-                 * kata dalam kalimat
-                 * 
-                 */
                 bool ketemu = false;
-                /**
-                 * perulangan pada stopword.txt
-                 * 
-                 */
                 foreach (String stopw in Stopword)
-                    /**
-                     * membandingkan kata pada kalimat dengan yang ada pada
-                     * list stopword
-                     * 
-                     * jika kata terdapat pada stopword maka kata tidak
-                     * digunakan lagi.
-                     * 
-                     */
                     if (s.Equals(stopw.Trim().ToLower()))
                     {
-                        /**
-                         * pengecekan string pada c# dengan .Equals
-                         * dan dengan parameter setiap kata stopword yang
-                         * di-trim untuk menghilangkan spasi yang tidak perlu
-                         * pada string kata stopword
-                         * selanjutnya kata juga diubah ke lowercase atau
-                         * huruf kecil agar perbandingan kata seimbang (sebelumnya
-                         *      kata pada kalimat juga di lowercase)
-                         */
                         ketemu = true;
                         break;
                     }
                 if (!ketemu)
-                    /**
-                     * jika tidak ditemukan dalam stopword maka
-                     * baru boleh ditambahkan
-                     * 
-                     */
                     list.Add(s);
             }
             return list.ToArray();
@@ -141,27 +82,12 @@ namespace AnalisisAlgoRekursifVIterasi
 
         private static String[] Tokenizing(string v)
         {
-            /**
-             * menghilangkan karakter lain SELAIN abjad, angka, 
-             * tanda '-' dan spasi
-             * 
-             */
             v = Regex.Replace(v, @"[^a-zA-Z0-9\-\s]", "");
-            /**
-             * menghilangkan semua angka yang berdiri sendiri, 
-             *      sehingga kata seperti '3d' atau 'm3' tidak dihapus
-             *      sedangkan '2000' dihapus
-             * 
-             */
             v = Regex.Replace(v, @"\b[0-9]+\b", "");
             return v.Split();
         }
 
         private static string CaseFolding(string v){
-            /**
-             * mengubah kalimat string ke huruf kecil
-             * 
-             */
             return v.ToLower();
         }
 
@@ -173,20 +99,12 @@ namespace AnalisisAlgoRekursifVIterasi
                 bool ketemu = false;
                 foreach(String bankw in BankKata)
                 {
-                    /**
-                     * cek jika ada kata yang sama
-                     * 
-                     */
                     if (kata.Equals(bankw.Trim().ToLower()))
                     {
                         ketemu = true;
                         V.Add(kata);
                         break;
                     } else {
-                        /**
-                         * jika ada kata pertama yang yang mengandung
-                         * 
-                         */
                         var regex = new Regex(@"^(sub|re-?|me(-|n|m|ng|ny)|di|be(l|r)?|ter-?|ke-?|se-?|pen?)?(" 
                             + bankw.Trim().ToLower() 
                             + ")(lah|-?nya|an|kan|i|-?ku|-?mu|kah|tah)?$"
@@ -214,12 +132,6 @@ namespace AnalisisAlgoRekursifVIterasi
             {
                 String filedir = System.AppContext.BaseDirectory;
                 String file_string = File.ReadAllText(filedir + path);
-
-                /**
-                 * 
-                 * sampel
-                 * 
-                 */
 
                 Regex regex = new Regex("(.+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
                 MatchCollection result = regex.Matches(file_string);
