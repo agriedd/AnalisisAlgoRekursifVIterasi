@@ -11,182 +11,199 @@ using System.Threading.Tasks;
 namespace AnalisisAlgoRekursifVIterasi
 {
     class Program{
+
+        private static string[] data;
+        private static string[] Stopword;
+        private static string[] BankKata;
+
         static void Main(string[] args){
-
-
-            //var loader = new Loader();
-            //loader.start();
-
             /**
              * memuat data sampel sebagai array string
              * 
              */
-            String[] data = loadFile("../../Assets/words_dictionary.json");
-            /**
-             * periksa string hasil
-             * 
-             */
-            //Console.WriteLine("{0}", String.Join(",", data));
-
-            /**
-             * program dibawah
-             * 
-             * urutkan data yang masih berantakan
-             * 
-             */
-            orderData(data);
-
-            //loader.loading = false;
-            //loader = null;
-
-            Console.Title = "Rekursif v Iterasi";
-
-            Console.WriteLine("Masukan kata dasar yang ingin dicari (Inggris):");
-            String cari = Console.ReadLine();
-            var watch = new Stopwatch();
-
-            /**
-             * 
-             * 1. binary search rekursif
-             * 
-             */
-            Console.WriteLine("Binary Search (Rekursif)");
-            watch.Start();
-            int result = binarySearchRekusif(data, cari, data.Length);
-            watch.Stop();
-
-            if (result == -1)
-                Console.WriteLine("Element not present");
-            else
-                Console.WriteLine("Ditemukan pada "
-                                + "index " + result + ": {0}", data[result]);
-            Console.WriteLine("Waktu: "+watch.ElapsedMilliseconds + "." + watch.ElapsedTicks + "ms");
-            watch.Reset();
-            Console.WriteLine();
-            Console.ReadLine();
-
-            /**
-             * 
-             * 2. binary search iteratif
-             * 
-             */
-            Console.WriteLine("Binary Search (Iteratif)");
-            watch.Start();
-            result = binarySearch(data, cari);
-            watch.Stop();
-
-            if (result == -1)
-                Console.WriteLine("Element not present");
-            else
-                Console.WriteLine("Ditemukan pada "
-                                + "index " + result + ": {0}", data[result]);
-            Console.WriteLine("Waktu: " + watch.ElapsedMilliseconds + "." + watch.ElapsedTicks + "ms");
-            watch.Reset();
-            Console.WriteLine();
-            Console.ReadLine();
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            stopwatch.Start();
             
-            /**
-             * 
-             * 3. linear search rekursif
-             * 
-             */
-            Console.WriteLine("Linear Search (Rekursif)");
-            watch.Start();
-            result = linearSearchRekursif(data, cari);
-            watch.Stop();
+            var loadTeks = new Task(()=> data = loadFile("../../Assets/teks.txt"));
+            var loadStopword = new Task(() => Stopword = loadFile("../../Assets/stopword.txt"));
+            var loadBankKata = new Task(() => BankKata = loadFile("../../Assets/bank_kata.txt"));
 
-            if (result == -1)
-                Console.WriteLine("Element not present");
-            else
-                Console.WriteLine("Ditemukan pada "
-                                + "index " + result + ": {0}", data[result]);
-            Console.WriteLine("Waktu: " + watch.ElapsedMilliseconds + "." + watch.ElapsedTicks + "ms");
-            watch.Reset();
-            Console.WriteLine();
-            Console.ReadLine();
+            loadTeks.Start();
+            loadStopword.Start();
+            loadBankKata.Start();
+            
+            Task.WaitAll(new Task[] { loadTeks, loadStopword, loadBankKata });
 
             /**
-             * 
-             * 4. linear search iteratif
+             * print string hasil
              * 
              */
-            Console.WriteLine("Linear Search (Iteratif)");
-            watch.Start();
-            result = linearSearch(data, cari);
-            watch.Stop();
-
-            if (result == -1)
-                Console.WriteLine("Element not present");
-            else
-                Console.WriteLine("Ditemukan pada "
-                                + "index " + result + ": {0}", data[result]);
-            Console.WriteLine("Waktu: " + watch.ElapsedMilliseconds + "." + watch.ElapsedTicks + "ms");
-            watch.Reset();
+            Console.WriteLine("Cetak hasil sampel kalimat: ");
+            foreach (String s in data)
+                Console.WriteLine(s);
             Console.WriteLine();
-            Console.ReadLine();
+            Console.WriteLine();
 
-        }
-
-        private static string[] orderData(string[] data){
-            Console.WriteLine("Sedang mengurutkan data...");
-            Array.Sort(data, (x, y) => String.Compare(x, y));
-            Console.Clear();
-            return data;
-        }
-
-        /**
-         * rekursif
-         * 
-         */
-        public static int linearSearchRekursif(String[] data, String x, int i = 0){
-            if (i >= data.Length || i <= 1000) return -1;
-            else if (data[i] == x) return i;
-            i++;
-            return linearSearchRekursif(data, x, i);
-        }
-
-        static int binarySearchRekusif(String[] arr, String x, int r, int m = 0, int l = 0)
-        {
-            if (l > r) return -1;
-            m = l + ((r - l) / 2);
-            int res = x.CompareTo(arr[m]);
-            if (res == 0)
-                return m;
-
-            else
-                if (res > 0)
-                    l = m + 1;
-                else
-                    r = m - 1;
-            return binarySearchRekusif(arr, x, r, m, l);
-        }
-
-        public static int linearSearch(String[] data, String x){
-            int n = data.Length;
-            for (int i = 0; i < n; i++)
-                if (data[i] == x)
-                    return i;
-            return -1;
-        }
-
-        static int binarySearch(String[] arr, String x)
-        {
-            int l = 0, r = arr.Length - 1;
-            while (l <= r)
+            /**
+            foreach (String s in data)
             {
-                int m = l + ((r - l) / 2);
-
-                int res = x.CompareTo(arr[m]);
-
-                // Check if x is present at mid
-                if (res == 0) return m;
-                else
-                    // If x greater, ignore left half
-                    if (res > 0) l = m + 1;
-                    // If x is smaller, ignore right half
-                    else r = m - 1;
+                TextProcessing(s);
             }
-            return -1;
+            stopwatch.Stop();
+            Console.WriteLine("Waktu {0}ms", stopwatch.ElapsedMilliseconds);
+            */
+
+            Parallel.For(0, data.Length, i =>
+            {
+                TextProcessing(data[i]);
+            });
+            stopwatch.Stop();
+            Console.WriteLine("Waktu {0}ms", stopwatch.ElapsedMilliseconds);
+
+
+            Console.WriteLine();
+            Console.ReadLine();
+
+        }
+
+        private static void TextProcessing(string v)
+        {
+            /**
+             * case folding => mengubah semua karakter ke lowercase atau huruf kecil
+             * 
+             */
+            v = CaseFolding(v);
+            /**
+             * tokenizing => 
+             */
+            Console.WriteLine();
+            Console.WriteLine(v);
+            String[] V = Tokenizing(v);
+            V = Filtering(V);
+            V = Stemming(V);
+
+            foreach (String s in V)
+                Console.Write("{0} ", s);
+            Console.WriteLine();
+        }
+
+        private static string[] Filtering(string[] v){
+            List<String> list = new List<String>();
+            /**
+             * perulangan kata pada kalimat
+             * 
+             */
+            foreach (String s in v)
+            {
+                /**
+                 * nilai ketemu awalnya bernilai false untuk setiap
+                 * kata dalam kalimat
+                 * 
+                 */
+                bool ketemu = false;
+                /**
+                 * perulangan pada stopword.txt
+                 * 
+                 */
+                foreach (String stopw in Stopword)
+                    /**
+                     * membandingkan kata pada kalimat dengan yang ada pada
+                     * list stopword
+                     * 
+                     * jika kata terdapat pada stopword maka kata tidak
+                     * digunakan lagi.
+                     * 
+                     */
+                    if (s.Equals(stopw.Trim().ToLower()))
+                    {
+                        /**
+                         * pengecekan string pada c# dengan .Equals
+                         * dan dengan parameter setiap kata stopword yang
+                         * di-trim untuk menghilangkan spasi yang tidak perlu
+                         * pada string kata stopword
+                         * selanjutnya kata juga diubah ke lowercase atau
+                         * huruf kecil agar perbandingan kata seimbang (sebelumnya
+                         *      kata pada kalimat juga di lowercase)
+                         */
+                        ketemu = true;
+                        break;
+                    }
+                if (!ketemu)
+                    /**
+                     * jika tidak ditemukan dalam stopword maka
+                     * baru boleh ditambahkan
+                     * 
+                     */
+                    list.Add(s);
+            }
+            return list.ToArray();
+        }
+
+        private static String[] Tokenizing(string v)
+        {
+            /**
+             * menghilangkan karakter lain SELAIN abjad, angka, 
+             * tanda '-' dan spasi
+             * 
+             */
+            v = Regex.Replace(v, @"[^a-zA-Z0-9\-\s]", "");
+            /**
+             * menghilangkan semua angka yang berdiri sendiri, 
+             *      sehingga kata seperti '3d' atau 'm3' tidak dihapus
+             *      sedangkan '2000' dihapus
+             * 
+             */
+            v = Regex.Replace(v, @"\b[0-9]+\b", "");
+            return v.Split();
+        }
+
+        private static string CaseFolding(string v){
+            /**
+             * mengubah kalimat string ke huruf kecil
+             * 
+             */
+            return v.ToLower();
+        }
+
+        private static String[] Stemming(String[] v)
+        {
+            List<String> V = new List<string>();
+            foreach(string kata in v)
+            {
+                bool ketemu = false;
+                foreach(String bankw in BankKata)
+                {
+                    /**
+                     * cek jika ada kata yang sama
+                     * 
+                     */
+                    if (kata.Equals(bankw.Trim().ToLower()))
+                    {
+                        ketemu = true;
+                        V.Add(kata);
+                        break;
+                    } else {
+                        /**
+                         * jika ada kata pertama yang yang mengandung
+                         * 
+                         */
+                        var regex = new Regex(@"^(sub|re-?|me(-|n|m|ng|ny)|di|be(l|r)?|ter-?|ke-?|se-?|pen?)?(" 
+                            + bankw.Trim().ToLower() 
+                            + ")(lah|-?nya|an|kan|i|-?ku|-?mu|kah|tah)?$"
+                        );
+                        var res = regex.Match(kata);
+                        if(res.Success)
+                        {
+                            ketemu = true;
+                            V.Add(bankw.Trim().ToLower());
+                            break;
+                        }
+                    }
+                }
+                if(!ketemu)
+                    V.Add(kata);
+            }
+            return V.ToArray();
         }
 
         static String[] loadFile(String path){
@@ -196,20 +213,16 @@ namespace AnalisisAlgoRekursifVIterasi
             try
             {
                 String filedir = System.AppContext.BaseDirectory;
-                String json_string = File.ReadAllText(filedir + path);
+                String file_string = File.ReadAllText(filedir + path);
 
                 /**
                  * 
                  * sampel
                  * 
                  */
-                //String json_sample = "{\n" +
-                //    "\"edd\": 1, \n" +
-                //    "\"hello\": 1 \n" +
-                //    "}";
 
-                Regex regex = new Regex("(\")(\\w+)(\")", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-                MatchCollection result = regex.Matches(json_string);
+                Regex regex = new Regex("(.+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                MatchCollection result = regex.Matches(file_string);
 
                 Console.Clear();
 
@@ -219,10 +232,12 @@ namespace AnalisisAlgoRekursifVIterasi
                     int i = 0;
                     foreach (Match match in result)
                     {
-                        values[i] = match.Groups[2].Value;
+                        values[i] = match.Groups[1].Value;
                         i++;
                     }
-                    Console.WriteLine("s: {0}", result.Count);
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("File '{0}' dimuat: {1} baris data", path, result.Count);
+                    Console.ResetColor();
 
                     return values;
                 }
@@ -240,40 +255,17 @@ namespace AnalisisAlgoRekursifVIterasi
             return values;
         }
 
-        class Loader
+        static String[] loadFile()
         {
-            public bool loading = false;
-            int counter = 0;
-            public Loader(){
-                
-            }
-            public void start(){
-                this.loading = true;
-                this.loadRuning();
-            }
-            public void loadRuning(){
-                Task.Delay(50).ContinueWith((task) => {
-                    if (loading)
-                        this.loadRuning();
-                    else
-                    {
-                        Console.Title = "Rekursif v Iterasi";
-                        return;
-                    }
-                        
-                    //Console.ForegroundColor = ConsoleColor.Green;
-                    //Console.SetCursorPosition(0, 0);
-                    if (counter >= 4) counter = 0;
-                    String bar;
-                    if (counter == 1) bar = "/";
-                    else if (counter == 2) bar = "|";
-                    else if (counter == 3) bar = "\\";
-                    else bar = "-";
-                    Console.Title = "Memuat... " + bar;
-                    Console.ResetColor();
-                    counter++;
-                });
-            }
+            String[] values =
+            {
+                "Halo apakabar",
+                "Halo dunia",
+                "selamat pagi :)",
+                "Semoga harimu menyenangkan.",
+            };
+            return values;
         }
+
     }
 }

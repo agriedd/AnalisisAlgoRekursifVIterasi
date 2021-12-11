@@ -51,6 +51,9 @@
     <None Include="App.config" />
     <None Include="Assets\words_dictionary.json" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Assets\stopword.txt" />
+    <Content Include="Assets\teks.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
