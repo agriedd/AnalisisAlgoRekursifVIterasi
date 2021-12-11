@@ -1,3 +1,10 @@
 ﻿Perancangan Sistem Informasi Manajemen Rumah Sakit Berbasis Web
 Rancang Bangun Aplikasi Alat Musik Kolintang Menggunakan Augmented Reality Berbasis Android
+Evaluasi Implementasi Sistem E-Learning menggunakan Model Evaluasi HOT (Human, Organization, Technology) Fit (Studi Kasus Universitas Sam Ratulangi)
 Pemetaan Daerah Ancaman Tanah Longsor di Kota Manado
+Sistem Pendukung Keputusan Pemilihan Jenis Lampu untuk Pencahayaan Ruangan Menggunakan Metode AHP
+Rancang Bangun Aplikasi Bimbingan Dosen Wali Secara Online
+Alat Peraga Digital Pengenalan Pahlawan Sulawesi Utara
+Perancangan Aplikasi Web Berbasis Usability
+Rancang Bangun Aplikasi Uji Kepribadian MBTI Berbasis Android Menggunakan Sistem Pakar
+Pemanfaatan Virtual Tour Sebagai Interaksi Manusia dan Komputer
