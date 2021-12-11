@@ -24,15 +24,9 @@ namespace AnalisisAlgoRekursifVIterasi
             Stopwatch stopwatch = Stopwatch.StartNew();
             stopwatch.Start();
             
-            var loadTeks = new Task(()=> data = loadFile("../../Assets/teks.txt"));
-            var loadStopword = new Task(() => Stopword = loadFile("../../Assets/stopword.txt"));
-            var loadBankKata = new Task(() => BankKata = loadFile("../../Assets/bank_kata.txt"));
-
-            loadTeks.Start();
-            loadStopword.Start();
-            loadBankKata.Start();
-            
-            Task.WaitAll(new Task[] { loadTeks, loadStopword, loadBankKata });
+            data = loadFile("../../Assets/teks.txt");
+            Stopword = loadFile("../../Assets/stopword.txt");
+            BankKata = loadFile("../../Assets/bank_kata.txt");
 
             /**
              * print string hasil
@@ -53,10 +47,11 @@ namespace AnalisisAlgoRekursifVIterasi
             Console.WriteLine("Waktu {0}ms", stopwatch.ElapsedMilliseconds);
             */
 
-            Parallel.For(0, data.Length, i =>
+            
+            foreach(var s in data)
             {
-                TextProcessing(data[i]);
-            });
+                TextProcessing(s);
+            }
             stopwatch.Stop();
             Console.WriteLine("Waktu {0}ms", stopwatch.ElapsedMilliseconds);
 
