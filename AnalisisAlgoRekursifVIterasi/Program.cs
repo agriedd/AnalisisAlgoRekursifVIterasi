@@ -15,6 +15,7 @@ namespace AnalisisAlgoRekursifVIterasi
         private static string[] data;
         private static string[] Stopword;
         private static string[] BankKata;
+        private static List<String>[] Hasil; 
 
         static void Main(string[] args){
             /**
@@ -34,6 +35,8 @@ namespace AnalisisAlgoRekursifVIterasi
             
             Task.WaitAll(new Task[] { loadTeks, loadStopword, loadBankKata });
 
+            Hasil = new List<string>[data.Length];
+            
             /**
              * print string hasil
              * 
@@ -55,7 +58,7 @@ namespace AnalisisAlgoRekursifVIterasi
 
             Parallel.For(0, data.Length, i =>
             {
-                TextProcessing(data[i]);
+                TextProcessing(data[i], i);
             });
             stopwatch.Stop();
             Console.WriteLine("Waktu {0}ms", stopwatch.ElapsedMilliseconds);
@@ -66,7 +69,7 @@ namespace AnalisisAlgoRekursifVIterasi
 
         }
 
-        private static void TextProcessing(string v)
+        private static void TextProcessing(string v, int pos)
         {
             /**
              * case folding => mengubah semua karakter ke lowercase atau huruf kecil
@@ -75,14 +78,14 @@ namespace AnalisisAlgoRekursifVIterasi
             v = CaseFolding(v);
             /**
              * tokenizing => 
+             * 
              */
-            Console.WriteLine();
-            Console.WriteLine(v);
             String[] V = Tokenizing(v);
             V = Filtering(V);
-            V = Stemming(V);
+            Hasil[pos] = new string[V.Length].ToList();
+            Stemming(V, pos);
 
-            foreach (String s in V)
+            foreach (String s in Hasil[pos])
                 Console.Write("{0} ", s);
             Console.WriteLine();
         }
@@ -165,12 +168,12 @@ namespace AnalisisAlgoRekursifVIterasi
             return v.ToLower();
         }
 
-        private static String[] Stemming(String[] v)
+        private static void Stemming(String[] v, int pos)
         {
-            List<String> V = new List<string>();
-            foreach(string kata in v)
+            Parallel.For(0, v.Length, i =>
             {
                 bool ketemu = false;
+                var kata = v[i];
                 foreach(String bankw in BankKata)
                 {
                     /**
@@ -180,7 +183,7 @@ namespace AnalisisAlgoRekursifVIterasi
                     if (kata.Equals(bankw.Trim().ToLower()))
                     {
                         ketemu = true;
-                        V.Add(kata);
+                        Hasil[pos].Insert(i, kata);
                         break;
                     } else {
                         /**
@@ -195,15 +198,14 @@ namespace AnalisisAlgoRekursifVIterasi
                         if(res.Success)
                         {
                             ketemu = true;
-                            V.Add(bankw.Trim().ToLower());
+                            Hasil[pos].Insert(i, bankw.Trim().ToLower());
                             break;
                         }
                     }
                 }
                 if(!ketemu)
-                    V.Add(kata);
-            }
-            return V.ToArray();
+                    Hasil[pos].Insert(i, kata);
+            });
         }
 
         static String[] loadFile(String path){
